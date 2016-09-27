@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+						   http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+						   http://www.springframework.org/schema/context
+						   http://www.springframework.org/schema/context/spring-context-4.2.xsd
+						   http://www.springframework.org/schema/mvc
+						   http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd">
+
+
+	<context:annotation-config/>
+
+	<!--DispatcherServlet上下文，只管理@Controller类型的bean,忽略其他类型的bean，如Service-->
+	<context:component-scan base-package="com.cn.Controller">
+		<context:include-filter type="annotation"
+								expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+
+	<!-- HandlerMapping ,无需配置，Spring MVC 可以默认启动。
+    DefaultAnnotionHandlerMapping annotion-driven HandlerMapping
+    -->
+
+	<!--扩充了注解驱动，可以将请求参数绑定到控制器参数-->
+	<mvc:annotation-driven/>
+
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+	<!-- 视图解析器策略 和 视图解析器,对JSTL提供良好的支持 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
+
+	<!-- 全局异常处理 -->
+	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="java.lang.Exception">errors/error</prop>
+				<prop key="java.lang.Throwable">errors/err</prop>
+			</props>
+		</property>
+		<property name="statusCodes">
+			<props>
+				<prop key="errors/error">500</prop>
+				<prop key="errors/404">404</prop>
+			</props>
+		</property>
+		<property name="warnLogCategory" value="WARN"></property>
+		<property name="defaultErrorView" value="errors/error"></property>
+		<property name="defaultStatusCode" value="500"></property>
+	</bean>
+</beans>
